@@ -13,3 +13,10 @@ This is a eBay-like auction site built with Django.
 - Close auctions (listing owner can declare winner)
 - View listings by category
 - Admin interface to manage users, listings, bids, and comments
+
+![Log-in Page](docs/imgs/login.png)  
+![Active Listings Page](docs/imgs/active_listings.png)  
+![Listing Page](docs/imgs/listing.png)  
+![Categories Page](docs/imgs/categories.png)  
+![Watchlist](docs/imgs/watchlist.png)  
+![Admin Panel](docs/imgs/admin.png)  
