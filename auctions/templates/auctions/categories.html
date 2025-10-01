@@ -1,0 +1,31 @@
+{% extends "auctions/listingslayout.html" %}
+
+{% block page-heading %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="dropdown">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if selected_category %}
+                {{ selected_category.name }}
+            {% else%}
+                Select category
+            {% endif %}
+        </a>
+
+        <ul class="dropdown-menu">
+            {% for category in categories %}
+                {% if selected_category.id != category.id %}
+                    <li><a class="dropdown-item" href="{% url 'auctions:category' category.id %}">{{ category.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block empty-msg %}
+
+    No listings for this category.
+
+{% endblock %}
+

@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% block page-heading %}
+    {% endblock %}
+
+    {% for listing in listings %}
+    
+    <div id="lightbox-{{ forloop.counter }}" class="lightbox">
+        <a href="#" class="close"></a>
+        <img src="{{ listing.image }}" alt="Auction item enlarged">
+    </div>
+     
+        <div class="card mb-3 link-card " style="max-width: 600px;">
+            <div class="row g-0">
+                {% if listing.image %}
+                    <div id="listing-img-{{ forloop.counter }}" class="col-md-4 d-flex justify-content-center listing-img">
+                        <a href="#lightbox-{{ forloop.counter }}">
+                            <img src="{{ listing.image }}" class="img-fluid rounded-start" alt="Auction item">
+                        </a>
+                    </div>
+
+                {% endif %}
+                <div class="col-md-8">
+                        <a href="{% url 'auctions:listing' listing.id %}" class="text-decoration-none text-reset h-100"> 
+                        <div class="card-body h-100">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text"><strong>Price:</strong> {{ listing.starting_bid }}$</p>
+                            <p class="card-text">{{ listing.description }}</p>
+                            <p class="card-text"><small class="text-body-secondary">Created {{ listing.date|date:"M d, Y, P" }}</small></p>
+                        </div>
+                    </a>
+                    </div>
+            </div>
+        </div>
+        
+    {% empty %}
+        <p class="card-title">{% block empty-msg %}No listings.{% endblock %}</p>
+    {% endfor %}
+    
+{% endblock %}

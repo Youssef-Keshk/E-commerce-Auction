@@ -1,0 +1,133 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>Listing: {{ listing.title }}</h2> 
+
+    {% if authenticated %}
+
+        <div class="d-flex align-items-center">
+            {% if on_watchlist %}
+                <span class="badge text-light bg-secondary">watchlist</span>
+            {% endif %}
+
+            <form action="{% url 'auctions:listing' listing.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="watchlist_form">
+
+                {% if on_watchlist %}
+                    <input type="submit" name='watchlist_form' value="-" id="watchlst-btn-bid" class="btn-bid">
+                {% else %}
+                    <input type="submit" name='watchlist_form' value="+" id="watchlst-btn-bid" class="btn-bid">
+                {% endif %}
+
+            </form>
+        </div>
+    {% endif %}
+
+
+    <div class="card mb-3">
+        <img src="{{ listing.image }}" id="listing-img" class="card-img-top" alt="Auction item">
+        <div class="card-body">
+            <p class="card-text">{{ listing.description }}</p>
+
+            {% if listing.highest_bid %}
+
+                <h2 class="card-title" style="margin-bottom: 1mm;">{{ listing.highest_bid.bid }}$</h2>
+                <p class="card-text" style="margin-bottom: 0;">
+                    {% if listing.status == "OPEN" %}
+                        {% if not listing.owner == request.user %}
+                            <small class="text-body-secondary">{{ listing.bids.count }} bid(s) so far. 
+                                {% if listing.highest_bid.bidder == request.user %}
+                                    Your bid is the current highest bid.
+                                {% else %}
+                                    Your bid is not the current highest bid.
+                                {% endif %}
+                            </small>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-body-secondary">
+                            {% if listing.winner == request.user %}
+                                Congrats, you won this bid.
+                            {% else %}
+                                This bid has been closed.
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </p>
+
+            {% else %}
+            
+                <h2 class="card-title" style="margin-bottom: 1mm;">{{ listing.starting_bid }}$</h2>
+                <p class="card-text" style="margin-bottom: 0;">
+                    {% if listing.status == "OPEN" %}
+                        <small class="text-body-secondary">No bids so far.</small>
+                    {% else %}
+                        This bid has been closed.
+                    {% endif %}
+                </p>
+
+            {% endif %}
+
+            {% if authenticated and listing.status == "OPEN" %}
+
+                <form action="{% url 'auctions:listing' listing.id %}" method="post" class="d-flex align-items-center">
+                {% csrf_token %}
+
+                {% if listing.owner == request.user %}
+
+                    <input type="hidden" name="form_type" value="close_bid_form">
+                    <input type="submit" name='close_bid_form' value="Close Bid" class="btn-bid ms-2">
+
+                {% else %}
+
+                    <input type="hidden" name="form_type" value="bid_form">
+                    {{ bid_form }}
+                    <input type="submit" name='bid_form' value="Place Bid" class="btn-bid ms-2">
+
+                {% endif %}
+                
+                </form>
+                <br>
+
+            {% endif %}    
+
+            <details>
+                <summary class="h5 card-title">Details</summary>
+                <p>
+                    <ul>
+                        <li>Listed by: <b>{{ listing.owner }}</b></li>
+                        <li>Category:
+                            <a href="{% url 'auctions:category' listing.category.id %}" style="color: #3b6fb5;"><b>{{ listing.category }}</b></a>
+                        </li>
+                    </ul>
+                </p>
+            </details>
+
+            
+            <details>
+                <summary class="h5 card-title">Comments</summary>
+                <p>
+                    {% for comment in listing.comments.all %}
+                        <b>{{ comment.author }}: </b>{{ comment.comment }}
+                        <br>
+                    {% endfor %}
+                </p>
+            </details>
+
+            {% if authenticated and listing.status == "OPEN" %}
+
+                <form action="{% url 'auctions:listing' listing.id %}" method="post" class="d-flex align-items-center">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="comment_form">
+                    {{ comment_form }}
+                    <input type="submit" name='comment_form' value="+" class="btn-bid ms-2">
+                </form>
+
+            {% endif %}    
+            
+        </div>
+    </div>
+
+
+{% endblock %}
